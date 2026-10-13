@@ -14,3 +14,20 @@ document.querySelector('#sidebarClose').addEventListener('click',()=>sidebar.cla
 document.querySelector('#themeToggle').addEventListener('click',()=>{document.body.classList.toggle('light');showToast(document.body.classList.contains('light')?'Light theme enabled':'Dark theme enabled')});
 document.querySelector('#openModalDemo').addEventListener('click',()=>modal.classList.add('visible'));document.querySelectorAll('[data-close-modal]').forEach(el=>el.addEventListener('click',()=>modal.classList.remove('visible')));document.querySelectorAll('.save-btn').forEach(btn=>btn.addEventListener('click',()=>{btn.textContent=btn.textContent==='☆'?'★':'☆';showToast(btn.textContent==='★'?'Job saved':'Job removed')}));document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearch();modal.classList.remove('visible')}});
 navItems.forEach(item=>item.addEventListener('click',()=>{sidebar.classList.remove('open');navItems.forEach(n=>n.classList.remove('active'));item.classList.add('active')}));
+document.querySelectorAll('.persona-flow').forEach(flow => {
+	const clearHighlight = () => flow.querySelectorAll('.is-path-highlighted').forEach(node => node.classList.remove('is-path-highlighted'));
+	const highlightPath = source => {
+		clearHighlight();
+		const paths = (source.dataset.flowPath || '').split(/\s+/).filter(Boolean);
+		flow.querySelectorAll('[data-flow-path]').forEach(node => {
+			const nodePaths = (node.dataset.flowPath || '').split(/\s+/);
+			if (paths.some(path => nodePaths.includes(path))) node.classList.add('is-path-highlighted');
+		});
+	};
+	flow.querySelectorAll('.flow-step,.flow-decision').forEach(step => {
+		step.addEventListener('mouseenter', () => highlightPath(step));
+		step.addEventListener('mouseleave', clearHighlight);
+		step.addEventListener('focusin', () => highlightPath(step));
+		step.addEventListener('focusout', clearHighlight);
+	});
+});
